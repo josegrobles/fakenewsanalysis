@@ -28,7 +28,7 @@ router.post('/article', function(req, res, next) {
     } = req.body
     let urinfo = URL.parse(url)
     client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
-        if (err) res.end("error")
+        if (err) res.end(JSON.stringify({status:"error"}))
         else {
             if (resp !== null) res.end(resp)
             else {
@@ -37,7 +37,7 @@ router.post('/article', function(req, res, next) {
                     res.end(JSON.stringify(article));
                 }).catch((err) => {
                     console.log(err)
-                    res.end("error");
+                    res.end(JSON.stringify({status:"error"}))
                 });
             }
         }
@@ -52,8 +52,8 @@ router.post('/related', function(req, res, next) {
     } = req.body
     let urinfo = URL.parse(url)
     client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
-        if (err) res.end("error")
-        else if (resp === null) res.end("send_again")
+        if (err) res.end(JSON.stringify({status:"error"}))
+        else if (resp === null) res.end(JSON.stringify({status:"send_again"}))
         else {
             let info = JSON.parse(resp)
             var options = {
@@ -87,7 +87,7 @@ router.post('/languageAnalysis',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hget(urinfo.hostname+":sentiments", urinfo.pathname, function(err, resp) {
-    if (err) res.end("error")
+    if (err) res.end(JSON.stringify({status:"error"}))
     else if (resp !== null) res.end(resp)
     else{
       client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
@@ -126,7 +126,7 @@ router.post('/keyPhrases',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hget(urinfo.hostname+":keyPhrases", urinfo.pathname, function(err, resp) {
-    if (err) res.end("error")
+    if (err) res.end(JSON.stringify({status:"error"}))
     else if (resp !== null) res.end(resp)
     else{
       client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
@@ -158,7 +158,7 @@ router.post('/like',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hincrby(urinfo.hostname+":likes", urinfo.pathname,1)
-  res.end("ok")
+  res.end(JSON.stringify({status:"ok"}))
 })
 router.post('/getlikes',function(req,res,next){
   let {
@@ -166,7 +166,7 @@ router.post('/getlikes',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hget(urinfo.hostname+":likes", urinfo.pathname,function(err,result){
-    if(err) res.end("error")
+    if(err) res.end(JSON.stringify({status:"error"}))
     else if(result === null) res.end(JSON.stringify({likes:0}))
     else res.end(JSON.stringify({likes:result}))
   })
@@ -177,7 +177,7 @@ router.post('/dislike',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hincrby(urinfo.hostname+":dislikes", urinfo.pathname,1)
-  res.end("ok")
+  res.end(JSON.stringify({status:"ok"}))
 })
 router.post('/getdislikes',function(req,res,next){
   let {
@@ -185,7 +185,7 @@ router.post('/getdislikes',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hget(urinfo.hostname+":dislikes", urinfo.pathname,function(err,result){
-    if(err) res.end("error")
+    if(err)   res.end(JSON.stringify({status:"error"}))
     else if(result === null) res.end(JSON.stringify({dislikes:0}))
     else res.end(JSON.stringify({dislikes:result}))
   })
@@ -220,7 +220,7 @@ router.post('/fb', function(req,res,next){
   facebook(url).then(r =>{
     res.end(JSON.stringify(r))
   }).catch(e =>{
-    res.end("error")
+    res.end(JSON.stringify({status:"error"}))
   })
 
 })
@@ -239,6 +239,15 @@ let searchTweet = (url,since_id) => {
     })
 }
 searchTweet(url,0)
+})
+
+router.post('/addcoment',function(req,res,next){
+  let {
+      url,comment
+  } = req.body
+  let urinfo = URL.parse(url)
+  client.hset(urinfo.hostname+":dislikes", urinfo.pathname,comment)
+  res.end(JSON.stringify({status:"ok"}))
 })
 
 router.post('/analysis', function(req, res, next) {
