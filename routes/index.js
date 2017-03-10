@@ -66,7 +66,7 @@ router.post('/related', function(req, res, next) {
                         let values = info.value
                         let final = []
                         for (var i = 0; i < values.length; i++) {
-                            if (moment('2017-03-10T13:35:00').isSame(values[i].datePublished, 'day')) final.push(values[i])
+                            if (moment(resp.publishedTime).isSame(values[i].datePublished, 'day')) final.push(values[i])
                         }
                         res.end(JSON.stringify(final))
                     }
