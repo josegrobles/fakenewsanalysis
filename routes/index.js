@@ -3,7 +3,7 @@ let ArticleParser = require('article-parser');
 let request = require('request')
 let moment = require('moment')
 let redis = require('redis')
-let client = redis.createClient()
+let client = redis.createClient(process.env.REDIS_URL)
 let URL = require('url').URL
 
 var router = express.Router();
