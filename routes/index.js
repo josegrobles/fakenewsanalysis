@@ -4,7 +4,7 @@ let request = require('request')
 let moment = require('moment')
 let redis = require('redis')
 let client = redis.createClient(process.env.REDIS_URL)
-let URL = require('url').URL
+let URL = require('url')
 
 var router = express.Router();
 
@@ -19,7 +19,7 @@ router.post('/article', function(req, res, next) {
     let {
         url
     } = req.body
-    let urinfo = new URL(url)
+    let urinfo = URL.parse(url)
     client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
         if (err) res.end("error")
         else {
@@ -44,7 +44,7 @@ router.post('/related', function(req, res, next) {
     let {
         url
     } = req.body
-    let urinfo = new URL(url)
+    let urinfo = URL.parse(url)
     client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
         if (err) res.end("error")
         else if (resp === null) res.end("send_again")
