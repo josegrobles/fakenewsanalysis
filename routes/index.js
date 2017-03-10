@@ -6,7 +6,13 @@ let redis = require('redis')
 let cheerio = require('cheerio')
 let client = redis.createClient(process.env.REDIS_URL)
 let URL = require('url')
-
+var Twit = require('twit')
+var T = new Twit({
+    consumer_key:         process.env.CONSUMER_KEY,
+    consumer_secret:      process.env.CONSUMER_SECRET,
+    access_token:         process.env.ACCESS_TOKEN,
+    access_token_secret:  process.env.ACCESS_TOKEN_SECRET
+})
 var router = express.Router();
 
 /* GET home page. */
@@ -154,6 +160,21 @@ router.post('/fb', function(req,res,next){
 
 })
 
+
+router.post('/twitter',function(req,res,next){
+  let {
+      url
+  } = req.body
+let x = []
+let searchTweet = (url,since_id) => {
+    T.get('search/tweets',{q:url,count:100,since_id},function(err,data,response){
+      for(var i = 0; i < data.statuses.length;i++) x.push(data.statuses[i])
+      if (data.statuses.length === 100) searchTweet(url,data.search_metadata.max_id_str)
+      else res.end(JSON.stringify({tweets:x.length}))
+    })
+}
+searchTweet(url,0)
+})
 
 router.post('/analysis', function(req, res, next) {
     let random = Math.random()
