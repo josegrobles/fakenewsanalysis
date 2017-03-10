@@ -23,6 +23,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/article', function(req, res, next) {
+  console.log(req.body)
+  console.log(req)
     let {
         url
     } = req.body
@@ -135,15 +137,8 @@ router.post('/keyPhrases',function(req,res,next){
         const $ = cheerio.load(parse.content)
         let object = {documents:[]}
         var index = 0
-        $('p').each(function(i,elem){
-          let texto = $(this).text().split(".")
-          for (var x=0;x<texto.length;x++){
-            if(texto[x] !== " " && texto[x] !== "") {
-              object.documents.push({language:"es",id:index,text:texto[x]})
-              index++
-            }
-          }
-        })
+        let text = $('p').text()
+        object.documents.push({id:0,})
         request.post("https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/keyPhrases",{body:JSON.stringify(object),headers: {'Ocp-Apim-Subscription-Key': process.env.OCP2}},function(error,response,body){
           let final = {sentiments:[]}
           const parsed = JSON.parse(body)
@@ -160,7 +155,44 @@ router.post('/keyPhrases',function(req,res,next){
 
 })
 
-
+router.post('/like',function(req,res,next){
+  let {
+      url
+  } = req.body
+  let urinfo = URL.parse(url)
+  client.hincrby(urinfo.hostname+":likes", urinfo.pathname,1)
+  res.end("ok")
+})
+router.post('/getlikes',function(req,res,next){
+  let {
+      url
+  } = req.body
+  let urinfo = URL.parse(url)
+  client.hget(urinfo.hostname+":likes", urinfo.pathname,function(err,result){
+    if(err) res.end("error")
+    else if(result === null) res.end(JSON.stringify({likes:0}))
+    else res.end(JSON.stringify({likes:result}))
+  })
+})
+router.post('/dislike',function(req,res,next){
+  let {
+      url
+  } = req.body
+  let urinfo = URL.parse(url)
+  client.hincrby(urinfo.hostname+":dislikes", urinfo.pathname,1)
+  res.end("ok")
+})
+router.post('/getdislikes',function(req,res,next){
+  let {
+      url
+  } = req.body
+  let urinfo = URL.parse(url)
+  client.hget(urinfo.hostname+":dislikes", urinfo.pathname,function(err,result){
+    if(err) res.end("error")
+    else if(result === null) res.end(JSON.stringify({dislikes:0}))
+    else res.end(JSON.stringify({dislikes:result}))
+  })
+})
 let facebook = function(url) {
         return new Promise((resolve,reject) => {
         var apiUrl = "https://graph.facebook.com/" + encodeURIComponent(url);
