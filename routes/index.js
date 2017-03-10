@@ -116,10 +116,52 @@ router.post('/languageAnalysis',function(req,res,next){
 })
 
 
+let facebook = function(url) {
+        return new Promise((resolve,reject) => {
+        var apiUrl = "https://graph.facebook.com/" + encodeURIComponent(url);
+
+        request.get({
+            url: apiUrl,
+            json: true
+        }, function(err, res, body) {
+            if (err) {
+                return callback(err);
+            }
+
+            if (!body || !body.share || typeof body.share.comment_count !== "number" || typeof body.share.share_count !== "number") {
+                reject(new Error("No well-formed body in response."));
+            }
+
+            // The "total count" will be the "comment count" plus the "share count."
+
+            resolve({comment_count:body.share.comment_count,share_count:body.share.share_count})
+        });
+      })
+    }
+
+router.post('/fb', function(req,res,next){
+  let {
+      url
+  } = req.body
+  console.log(url)
+  facebook(url).then(r =>{
+    console.log(r)
+    res.end(JSON.stringify(r))
+  }).catch(e =>{
+    console.log(e)
+    res.end("error")
+  })
+
+})
+
+
 router.post('/analysis', function(req, res, next) {
     let random = Math.random()
     res.end(JSON.stringify({
         accuracy: random
     }))
 })
+
+
+
 module.exports = router;
