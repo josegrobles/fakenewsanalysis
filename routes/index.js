@@ -23,8 +23,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/article', function(req, res, next) {
-  console.log(req.body)
-  console.log(req)
     let {
         url
     } = req.body
@@ -32,7 +30,6 @@ router.post('/article', function(req, res, next) {
     client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
         if (err) res.end("error")
         else {
-            console.log(resp !== null)
             if (resp !== null) res.end(resp)
             else {
                 ArticleParser.extract(url).then((article) => {
@@ -220,12 +217,9 @@ router.post('/fb', function(req,res,next){
   let {
       url
   } = req.body
-  console.log(url)
   facebook(url).then(r =>{
-    console.log(r)
     res.end(JSON.stringify(r))
   }).catch(e =>{
-    console.log(e)
     res.end("error")
   })
 
