@@ -16,6 +16,7 @@
     "morgan": "~1.7.0",
     "redis": "^2.6.5",
     "request": "^2.81.0",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.3.0",
+    "twit": "^2.2.5"
   }
 }
