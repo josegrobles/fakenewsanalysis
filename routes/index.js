@@ -5,5 +5,8 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
-
+router.post('/analysis',function(req,res,next){
+  let random = Math.random()
+  res.end(JSON.stringify({accuracy: random}))
+})
 module.exports = router;
