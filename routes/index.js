@@ -3,6 +3,7 @@ let ArticleParser = require('article-parser');
 let request = require('request')
 let moment = require('moment')
 let redis = require('redis')
+let cheerio = require('cheerio')
 let client = redis.createClient(process.env.REDIS_URL)
 let URL = require('url')
 
@@ -76,6 +77,41 @@ router.post('/related', function(req, res, next) {
 })
 
 router.post('/languageAnalysis',function(req,res,next){
+  let {
+      url
+  } = req.body
+  let urinfo = URL.parse(url)
+  client.hget(urinfo.hostname+":sentiments", urinfo.pathname, function(err, resp) {
+    if (err) res.end("error")
+    else if (resp !== null) res.end(resp)
+    else{
+      client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
+        let parse = JSON.parse(resp)
+        const $ = cheerio.load(parse.content)
+        let object = {documents:[]}
+        var index = 0
+        $('p').each(function(i,elem){
+          let texto = $(this).text().split(".")
+          for (var x=0;x<texto.length;x++){
+            if(texto[x] !== " " && texto[x] !== "") {
+              object.documents.push({language:"es",id:index,text:texto[x]})
+              index++
+            }
+          }
+        })
+        request.post("https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/sentiment",{body:JSON.stringify(object),headers: {'Ocp-Apim-Subscription-Key': process.env.OCP2}},function(error,response,body){
+          let final = {sentiments:[]}
+          const parsed = JSON.parse(body)
+          for(var i=0;i < parsed.documents.length ; i++){
+            final.sentiments.push({score:parsed.documents[i].score,text:object.documents[parsed.documents[i].id].text})
+          }
+          client.hset(urinfo.hostname+":sentiments", urinfo.pathname,JSON.stringify(final))
+          res.end(JSON.stringify(final))
+        })
+      })
+
+    }
+})
 
 })
 
