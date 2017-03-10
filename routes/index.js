@@ -121,6 +121,45 @@ router.post('/languageAnalysis',function(req,res,next){
 
 })
 
+router.post('/keyPhrases',function(req,res,next){
+  let {
+      url
+  } = req.body
+  let urinfo = URL.parse(url)
+  client.hget(urinfo.hostname+":keyPhrases", urinfo.pathname, function(err, resp) {
+    if (err) res.end("error")
+    else if (resp !== null) res.end(resp)
+    else{
+      client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
+        let parse = JSON.parse(resp)
+        const $ = cheerio.load(parse.content)
+        let object = {documents:[]}
+        var index = 0
+        $('p').each(function(i,elem){
+          let texto = $(this).text().split(".")
+          for (var x=0;x<texto.length;x++){
+            if(texto[x] !== " " && texto[x] !== "") {
+              object.documents.push({language:"es",id:index,text:texto[x]})
+              index++
+            }
+          }
+        })
+        request.post("https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/keyPhrases",{body:JSON.stringify(object),headers: {'Ocp-Apim-Subscription-Key': process.env.OCP2}},function(error,response,body){
+          let final = {sentiments:[]}
+          const parsed = JSON.parse(body)
+          for(var i=0;i < parsed.documents.length ; i++){
+            final.sentiments.push({score:parsed.documents[i].keyPhrases,text:object.documents[parsed.documents[i].id].text})
+          }
+          client.hset(urinfo.hostname+":keyPhrases", urinfo.pathname,JSON.stringify(final))
+          res.end(JSON.stringify(final))
+        })
+      })
+
+    }
+})
+
+})
+
 
 let facebook = function(url) {
         return new Promise((resolve,reject) => {
