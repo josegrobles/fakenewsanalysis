@@ -1,0 +1,168 @@
+.particles-js-canvas-el{
+	position: fixed;
+	background: rgba(255,255,255,0.15);
+	z-index: 0;
+}
+#particles-js{
+	position: fixed;
+	top: 0;
+	background: rgba(255,255,255,0.15);
+	z-index: 0;
+}
+
+#searchBar{
+	display: flex;
+	flex-direction: row;
+	background: #fdfdfd;
+	padding: 3px 5px;
+	border-radius: 3px;
+	margin-top: 20vh;
+	padding: 10px;
+	border-radius: 3em;
+	box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 3px, rgba(0, 0, 0, 0.239216) 0px 1px 2px;
+}
+
+#searchBarPage{
+	display: flex;
+	flex-direction: row;
+	background: #fdfdfd;
+	padding: 3px 5px;
+	border-radius: 3px;
+	padding: 8px;
+	border-radius: 3em;
+	box-shadow: rgba(0, 0, 0, 0.117647) 0px 1px 3px, rgba(0, 0, 0, 0.239216) 0px 1px 2px;
+}
+
+#urlBox{
+	width: 95%;
+}
+#urlBoxPage{
+	width: 95%;
+}
+
+#inputUrlPage {
+    background: #fdfdfd;
+    width: 100%;
+    font-size: 1.1em;
+    border: none;
+}
+.glyphicon-search{
+	padding-top: 5px;
+	font-size: 1.5em;
+}
+
+#inputUrl:focus{
+	outline: none;
+	border-color: inherit;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+#inputUrlPage:focus{
+	outline: none;
+	border-color: inherit;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+#inputUrl{
+	background: #fdfdfd;
+	width: 100%;
+	font-size: 1.5em;
+	border: none;
+
+}
+
+#submitBox{
+	flex: 8;
+}
+
+#gitIcon{
+	height: 50px;
+	bottom: 10px;
+	position: absolute;
+	right: 10px;
+}
+
+img {
+    vertical-align: middle;
+    max-width: 100%;
+}
+
+.noPadding{
+	padding: 0;
+}
+#filterBox{
+	min-height: 100vh;
+	background: rgba(56, 145, 255, 0.13);
+	text-align: left;
+	padding: 5vw;
+	color: #4c4c4c;
+}
+
+#noticiaBox{
+	min-height: 100vh;
+	background-color: rgb(248, 249, 251);
+	padding: 5vw;
+}
+
+.imageNew{
+	width: 80%;
+	margin: 30px 0px 40px;
+}
+.htmlNew{
+	text-align: justify;
+}
+.descriptionNew{
+	color: #b1abab;
+	font-size: 1.5em;
+}
+
+#barOfResume{
+	width: 100%;
+    height: 40px;
+    background:  rgba(56, 145, 255, 0.53);
+    border: solid 1px rgb(147, 179, 249);
+    border-radius: 0.5em;
+
+}
+
+.soso{
+	opacity: 0.6;
+}
+#barOfResumePayload{
+    background: #f8f9fb;
+    height: 100%;
+    border-radius: 0.5em 0.2em 0.2em 0.5em;
+        text-align: center;
+    padding: 10px;
+    color: #4c4c4c;
+}
+.botonFa{
+	width: 30%;
+    text-shadow: rgba(0, 0, 0, 0.0980392) 0px 1px 0px;
+    color: #b1abab;
+    min-height: 40px;
+    border: solid 1px #F8F9FA;
+    background: rgba(248, 249, 251, 0.4);
+    text-align: center;
+    padding: 5px;
+    color: #444;
+    border-radius: 0.5em;
+    box-shadow: 2px 2px 5px 0px #b3b6bb;
+    margin: 0 10%;
+}
+
+.botonFa:hover{
+	background: rgba(248, 249, 251, 1);
+}
+
+.infoBoxItemFirst{
+	margin-top: 2vw;
+	display: flex;
+}
+.infoBoxItem{
+	margin-top: 5vw;
+	color: #F8F9FA;
+	text-align: center;
+}
