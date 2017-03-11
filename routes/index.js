@@ -80,12 +80,15 @@ router.post('/related', function(req, res, next) {
         if (err) res.end(JSON.stringify({status:"error"}))
         else if (resp === null) res.end(JSON.stringify({status:"send_again"}))
         else {
-          client.get(urinfo.pathname,function(err,r){
-            console.log("get_related_cache")
-            console.log(err,r)
-            if (err) res.end(JSON.stringify({status:"error"}))
-            else if (r !== null) res.end(r)
-            else{
+          router.post('/related', function(req, res, next) {
+      let {
+          url
+      } = req.body
+      let urinfo = URL.parse(url)
+      client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
+          if (err) res.end(JSON.stringify({status:"error"}))
+          else if (resp === null) res.end(JSON.stringify({status:"send_again"}))
+          else {
               let info = JSON.parse(resp)
               var options = {
                   url: "https://api.cognitive.microsoft.com/bing/v5.0/news/search?q=" + info.title + "&count=10&offset=0&mkt=es-es&safeSearch=Moderate",
@@ -100,29 +103,17 @@ router.post('/related', function(req, res, next) {
                       if (resp.publishedTime === "") res.end(JSON.stringify(info.value))
                       else {
                           let values = info.value
-                          let final = {news:[]}
+                          let final = []
                           for (var i = 0; i < values.length; i++) {
-                              if (moment(resp.publishedTime).isSame(values[i].datePublished, 'day')) final.news.push(values[i])
+                              if (moment(resp.publishedTime).isSame(values[i].datePublished, 'day')) final.push(values[i])
                           }
-                          console.log(final)
-                          if(final.news.length > 0){
-                            client.set(urinfo.pathname,JSON.stringify(final),1800)
-                            res.end(JSON.stringify(final))
-                          }
-                          else{
-                            res.end(JSON.stringify({status:"error"}))
-                          }
-
+                          res.end(JSON.stringify(final))
                       }
                   }
               })
-
-            }
-          })
-
-        }
-    })
-})
+          }
+      })
+  })
 
 router.post('/languageAnalysis',function(req,res,next){
   let {
