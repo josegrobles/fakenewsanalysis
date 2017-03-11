@@ -77,7 +77,7 @@ router.post('/related', function(req, res, next) {
         url
     } = req.body
     let urinfo = URL.parse(url)
-    client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
+    client.get(urinfo.pathname, function(err, resp) {
         if (err) res.end(JSON.stringify({status:"error"}))
         else if (resp === null) res.end(JSON.stringify({status:"send_again"}))
         else {
@@ -99,6 +99,7 @@ router.post('/related', function(req, res, next) {
                         for (var i = 0; i < values.length; i++) {
                             if (moment(resp.publishedTime).isSame(values[i].datePublished, 'day')) final.push(values[i])
                         }
+                        client.set(urinfo.pathname,JSON.stringify(final),1800)
                         res.end(JSON.stringify(final))
                     }
                 }
@@ -290,10 +291,10 @@ router.post('/analysis', function(req, res, next) {
   let reliability = getKindOf(urinfo.hostname)
   var accuracy = 0
   getLoveAvgArticle(urinfo).then(r =>{
-    accuracy = reliability + r
+    accuracy = reliability + r*0.15
     return getLoveAvgGlobal(urinfo)
   }).then(r => {
-    accuracy += r
+    accuracy += r*0.05
     res.end(JSON.stringify({accuracy}))
   }).catch(err => {
     console.log(err)
