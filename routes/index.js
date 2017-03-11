@@ -359,7 +359,7 @@ getLoveAvgGlobal = (url) => {
 
 getUppercase = (url) => {
   return new Promise((resolve,reject) => {
-    client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
+    client.hget(url.hostname, url.pathname, function(err, resp) {
     if (err) reject(err)
     else if(resp === null) resolve(0)
     else{
