@@ -100,10 +100,11 @@ router.post('/related', function(req, res, next) {
                       if (resp.publishedTime === "") res.end(JSON.stringify(info.value))
                       else {
                           let values = info.value
-                          let final = []
+                          let final = {news:[]}
                           for (var i = 0; i < values.length; i++) {
-                              if (moment(resp.publishedTime).isSame(values[i].datePublished, 'day')) final.push(values[i])
+                              if (moment(resp.publishedTime).isSame(values[i].datePublished, 'day')) final.news.push(values[i])
                           }
+                          console.log(final)
                           if(final.length > 0){
                             client.set(urinfo.pathname,JSON.stringify(final),1800)
                             res.end(JSON.stringify(final))
