@@ -105,7 +105,7 @@ router.post('/related', function(req, res, next) {
                               if (moment(resp.publishedTime).isSame(values[i].datePublished, 'day')) final.news.push(values[i])
                           }
                           console.log(final)
-                          if(final.length > 0){
+                          if(final.news.length > 0){
                             client.set(urinfo.pathname,JSON.stringify(final),1800)
                             res.end(JSON.stringify(final))
                           }
