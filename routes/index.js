@@ -81,6 +81,8 @@ router.post('/related', function(req, res, next) {
         else if (resp === null) res.end(JSON.stringify({status:"send_again"}))
         else {
           client.get(urinfo.pathname,function(err,r){
+            console.log("get_related_cache")
+            console.log(err,r)
             if (err) res.end(JSON.stringify({status:"error"}))
             else if (r !== null) res.end(r)
             else{
@@ -102,8 +104,14 @@ router.post('/related', function(req, res, next) {
                           for (var i = 0; i < values.length; i++) {
                               if (moment(resp.publishedTime).isSame(values[i].datePublished, 'day')) final.push(values[i])
                           }
-                          client.set(urinfo.pathname,JSON.stringify(final),1800)
-                          res.end(JSON.stringify(final))
+                          if(final.length > 0){
+                            client.set(urinfo.pathname,JSON.stringify(final),1800)
+                            res.end(JSON.stringify(final))
+                          }
+                          else{
+                            res.end(JSON.stringify({status:"error"}))
+                          }
+
                       }
                   }
               })
@@ -414,7 +422,7 @@ getRelatedNewsOnGoodMedia = (url) => {
     if(err) reject(err)
     else if (resp === null) resolve(0)
     else{
-      
+
     }
 })
 })
