@@ -15,6 +15,32 @@ var T = new Twit({
 })
 var router = express.Router();
 
+var goodSites = []
+var biasedSites = []
+var satiricSites = []
+
+client.sadd("goodSites","elpais")
+client.sadd("goodSites","elmundo")
+client.sadd("goodSites","publico")
+client.sadd("goodSites","abc")
+client.sadd("goodSites","larazon")
+client.sadd("biased","okdiario")
+client.sadd("biased","periodistadigital")
+client.sadd("biased","diariodigital")
+client.sadd("biased","gaceta")
+client.sadd("satiric","elmundotoday")
+
+
+client.smembers("goodSites",function(err,reply){
+  goodSites = reply
+})
+client.smembers("biased",function(err,reply){
+  biasedSites = reply
+})
+client.smembers("satiric",function(err,reply){
+  satiricSites = reply
+})
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', {
@@ -204,11 +230,12 @@ let facebook = function(url) {
 
             if (!body || !body.share || typeof body.share.comment_count !== "number" || typeof body.share.share_count !== "number") {
                 reject(new Error("No well-formed body in response."));
+            }else{
+              resolve({comment_count:body.share.comment_count ? body.share.comment_count : 0 ,share_count:body.share.share_count ? body.share.share_count : 0})
             }
 
             // The "total count" will be the "comment count" plus the "share count."
 
-            resolve({comment_count:body.share.comment_count,share_count:body.share.share_count})
         });
       })
     }
@@ -251,12 +278,51 @@ router.post('/addcoment',function(req,res,next){
 })
 
 router.post('/analysis', function(req, res, next) {
-    let random = Math.random()
-    res.end(JSON.stringify({
-        accuracy: random
-    }))
+  //quality function [0-1] (the greater the better) = if in GoodSites = 0.5 else if not fake 0.2, fake 0. sentiment analysis [0-1] * 0.1 + if article in other goodSites [0-1] * 0.15 + avg likes/dislikes * 0.2 + follows standard? [0-1] * 0.05 + Title caps [0-1] * -0.1
+  //todo check agains polifacts...
+  let {
+      url,comment
+  } = req.body
+  let urinfo = URL.parse(url)
+  let reliability = getKindOf(urinfo.hostname)
+  getLoveAvg(urinfo).then(r =>{
+    const accuracy = reliability + r
+    res.end(JSON.stringify({accuracy}))
+  }).catch(err => {
+    res.end(JSON.stringify({status:"error"}))
+  })
 })
 
+getKindOf = (hostname) => {
+  for(var i = 0  ; i < goodSites.length ; i++){
+    if(hostname.includes(goodSites[i])) return 0.5
+  }
+  for(var i = 0  ; i < biasedSites.length ; i++){
+  if(hostname.includes(biasedSites[i])) return 0.2
+}
+for(var i = 0  ; i < satiricSites.length ; i++){
+  if(hostname.includes(satiricSites[i])) return 0.2
+  }
+  return 0
+}
 
-
+getLoveAvg = (url) => {
+  var dislikes = 0
+  var likes = 0
+  return new Promise((resolve,reject) => {
+    client.hget(url.hostname+":dislikes", url.pathname,function(err,result){
+      if (err) reject("error")
+      else if(result !== null) dislikes = result
+      client.hget(url.hostname+":likes", url.pathname,function(err,result){
+        if (err) reject("error")
+        else if(result !== null) likes = result
+        if(likes+dislikes === 0) resolve(0)
+        else{
+          const avg = likes / likes+dislikes
+          resolve(avg)
+        }
+      })
+    })
+  })
+}
 module.exports = router;
