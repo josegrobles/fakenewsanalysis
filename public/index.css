@@ -97,7 +97,7 @@ img {
 	background: rgba(56, 145, 255, 0.13);
 	text-align: left;
 	padding: 5vw;
-	color: #4c4c4c;
+	    color: #f8f9fb;
 }
 
 #noticiaBox{
@@ -166,3 +166,11 @@ img {
 	color: #F8F9FA;
 	text-align: center;
 }
+.infoBoxItem>a{
+	margin-top: 5vw;
+	color: #F8F9FA;
+	text-align: center;
+	    color: #f8f9fb;
+}
+
+
