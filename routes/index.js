@@ -409,6 +409,14 @@ getSentiments = (url) => {
 }
 
 getRelatedNewsOnGoodMedia = (url) => {
-
+  return new Promise((resolve,reject)=> {
+  client.get(urinfo.pathname,function(err,resp){
+    if(err) reject(err)
+    else if (resp === null) resolve(0)
+    else{
+      
+    }
+})
+})
 }
 module.exports = router;
