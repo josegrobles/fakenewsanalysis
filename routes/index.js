@@ -319,7 +319,7 @@ router.post('/analysis', function(req, res, next) {
     console.log(r,accuracy)
   }).then(r => {
     if (r > 0.5) accuracy += 0.1
-    else accuracy -= 0.5
+    else accuracy -= 0.05
     res.end(JSON.stringify({accuracy}))
   }).catch(err => {
     console.log(err)
