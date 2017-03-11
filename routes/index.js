@@ -43,9 +43,7 @@ client.smembers("satiric",function(err,reply){
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('index', {
-        title: 'Express'
-    });
+  res.sendfile('views/index.html');
 });
 
 router.post('/article', function(req, res, next) {
@@ -291,13 +289,16 @@ router.post('/analysis', function(req, res, next) {
   let reliability = getKindOf(urinfo.hostname)
   var accuracy = 0
   getLoveAvgArticle(urinfo).then(r =>{
-    accuracy = reliability + r*0.15
+    accuracy = reliability + (r*0.15)
+    console.log(accuracy)
     return getLoveAvgGlobal(urinfo)
   }).then(r => {
-    accuracy += r*0.05
+    accuracy += (r*0.05)
+    console.log(accuracy)
     return getUppercase(urinfo)
   }).then(r => {
     accuracy -= r*0.1
+    console.log(accuracy)
     res.end(JSON.stringify({accuracy}))
   }).catch(err => {
     console.log(err)
