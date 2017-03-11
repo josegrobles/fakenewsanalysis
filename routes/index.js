@@ -296,6 +296,7 @@ router.post('/analysis', function(req, res, next) {
     accuracy += r
     res.end(JSON.stringify({accuracy}))
   }).catch(err => {
+    console.log(err)
     res.end(JSON.stringify({status:"error"}))
   })
 })
