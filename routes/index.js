@@ -184,7 +184,7 @@ router.post('/like',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hincrby(urinfo.hostname+":likes", urinfo.pathname,1)
-  client.incr(urinfo.hostname+":likes")
+  client.incr(urinfo.hostname+":likesG")
   res.end(JSON.stringify({status:"ok"}))
 })
 router.post('/getlikes',function(req,res,next){
@@ -204,7 +204,7 @@ router.post('/dislike',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hincrby(urinfo.hostname+":dislikes", urinfo.pathname,1)
-  client.incr(urinfo.hostname+":dislikes")
+  client.incr(urinfo.hostname+":dislikesG")
   res.end(JSON.stringify({status:"ok"}))
 })
 router.post('/getdislikes',function(req,res,next){
@@ -337,10 +337,10 @@ getLoveAvgGlobal = (url) => {
   var dislikes = 0
   var likes = 0
   return new Promise((resolve,reject) => {
-    client.get(url.hostname+":dislikes",function(err,result){
+    client.get(url.hostname+":dislikesG",function(err,result){
       if (err) reject(err)
       else if(result !== null) dislikes = result
-      client.get(url.hostname+":likes",function(err,result){
+      client.get(url.hostname+":likesG",function(err,result){
         if (err) reject(err)
         else if(result !== null) likes = result
         if(likes+dislikes === 0) resolve(0)
