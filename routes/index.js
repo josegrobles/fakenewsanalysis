@@ -319,10 +319,10 @@ getLoveAvgArticle = (url) => {
   var likes = 0
   return new Promise((resolve,reject) => {
     client.hget(url.hostname+":dislikes", url.pathname,function(err,result){
-      if (err) reject("error")
+      if (err) reject(err)
       else if(result !== null) dislikes = result
       client.hget(url.hostname+":likes", url.pathname,function(err,result){
-        if (err) reject("error")
+        if (err) reject(err)
         else if(result !== null) likes = result
         if(likes+dislikes === 0) resolve(0)
         else{
@@ -338,10 +338,10 @@ getLoveAvgGlobal = (url) => {
   var likes = 0
   return new Promise((resolve,reject) => {
     client.get(url.hostname+":dislikes",function(err,result){
-      if (err) reject("error")
+      if (err) reject(err)
       else if(result !== null) dislikes = result
       client.get(url.hostname+":likes",function(err,result){
-        if (err) reject("error")
+        if (err) reject(err)
         else if(result !== null) likes = result
         if(likes+dislikes === 0) resolve(0)
         else{
