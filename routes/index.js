@@ -313,7 +313,7 @@ router.post('/analysis', function(req, res, next) {
 
 getKindOf = (hostname) => {
   for(var i = 0  ; i < goodSites.length ; i++){
-    if(hostname.includes(goodSites[i])) return 0.5
+    if(hostname.includes(goodSites[i])) return 0.63
   }
   for(var i = 0  ; i < biasedSites.length ; i++){
   if(hostname.includes(biasedSites[i])) return 0.2
