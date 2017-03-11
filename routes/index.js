@@ -361,7 +361,7 @@ getUppercase = (url) => {
   return new Promise((resolve,reject) => {
     client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
     if (err) reject(err)
-    else if(resp === null)
+    else if(resp === null) resolve(0)
     else{
         let parser = JSON.parse(resp)
         let arrayText = parser.title.split("")
