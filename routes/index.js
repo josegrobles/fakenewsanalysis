@@ -184,6 +184,7 @@ router.post('/like',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hincrby(urinfo.hostname+":likes", urinfo.pathname,1)
+  client.incr(urinfo.hostname+":likes")
   res.end(JSON.stringify({status:"ok"}))
 })
 router.post('/getlikes',function(req,res,next){
@@ -203,6 +204,7 @@ router.post('/dislike',function(req,res,next){
   } = req.body
   let urinfo = URL.parse(url)
   client.hincrby(urinfo.hostname+":dislikes", urinfo.pathname,1)
+  client.incr(urinfo.hostname+":dislikes")
   res.end(JSON.stringify({status:"ok"}))
 })
 router.post('/getdislikes',function(req,res,next){
@@ -280,6 +282,7 @@ router.post('/addcoment',function(req,res,next){
 router.post('/analysis', function(req, res, next) {
   //quality function [0-1] (the greater the better) = if in GoodSites = 0.5 else if not fake 0.2, fake 0. sentiment analysis [0-1] * 0.1 + if article in other goodSites [0-1] * 0.15 + avg likes/dislikes * 0.2 + follows standard? [0-1] * 0.05 + Title caps [0-1] * -0.1
   //todo check agains polifacts...
+  //add site likes avg
   let {
       url,comment
   } = req.body
