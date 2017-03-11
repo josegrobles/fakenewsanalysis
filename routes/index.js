@@ -406,4 +406,8 @@ getSentiments = (url) => {
       }
   })
 }
+
+getRelatedNewsOnGoodMedia = (url) => {
+  
+}
 module.exports = router;
