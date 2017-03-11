@@ -19,6 +19,7 @@ var goodSites = []
 var biasedSites = []
 var satiricSites = []
 
+//inject opensources data
 client.sadd("goodSites","elpais")
 client.sadd("goodSites","elmundo")
 client.sadd("goodSites","publico")
@@ -318,7 +319,7 @@ getKindOf = (hostname) => {
   }
   for(var i = 0  ; i < biasedSites.length ; i++){
   if(hostname.includes(biasedSites[i])) return 0.2
-}
+}s
   return 0
 }
 
