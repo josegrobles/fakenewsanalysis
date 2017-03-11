@@ -319,9 +319,6 @@ getKindOf = (hostname) => {
   for(var i = 0  ; i < biasedSites.length ; i++){
   if(hostname.includes(biasedSites[i])) return 0.2
 }
-for(var i = 0  ; i < satiricSites.length ; i++){
-  if(hostname.includes(satiricSites[i])) return 0.2
-  }
   return 0
 }
 
