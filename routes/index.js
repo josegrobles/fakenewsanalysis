@@ -288,8 +288,12 @@ router.post('/analysis', function(req, res, next) {
   } = req.body
   let urinfo = URL.parse(url)
   let reliability = getKindOf(urinfo.hostname)
-  getLoveAvg(urinfo).then(r =>{
-    const accuracy = reliability + r
+  var accuracy = 0
+  getLoveAvgArticle(urinfo).then(r =>{
+    accuracy = reliability + r
+    return getLoveAvgGlobal(urinfo)
+  }).then(r => {
+    accuracy += r
     res.end(JSON.stringify({accuracy}))
   }).catch(err => {
     res.end(JSON.stringify({status:"error"}))
@@ -309,7 +313,7 @@ for(var i = 0  ; i < satiricSites.length ; i++){
   return 0
 }
 
-getLoveAvg = (url) => {
+getLoveAvgArticle = (url) => {
   var dislikes = 0
   var likes = 0
   return new Promise((resolve,reject) => {
@@ -317,6 +321,25 @@ getLoveAvg = (url) => {
       if (err) reject("error")
       else if(result !== null) dislikes = result
       client.hget(url.hostname+":likes", url.pathname,function(err,result){
+        if (err) reject("error")
+        else if(result !== null) likes = result
+        if(likes+dislikes === 0) resolve(0)
+        else{
+          const avg = likes / likes+dislikes
+          resolve(avg)
+        }
+      })
+    })
+  })
+}
+getLoveAvgGlobal = (url) => {
+  var dislikes = 0
+  var likes = 0
+  return new Promise((resolve,reject) => {
+    client.get(url.hostname+":dislikes",function(err,result){
+      if (err) reject("error")
+      else if(result !== null) dislikes = result
+      client.get(url.hostname+":likes",function(err,result){
         if (err) reject("error")
         else if(result !== null) likes = result
         if(likes+dislikes === 0) resolve(0)
