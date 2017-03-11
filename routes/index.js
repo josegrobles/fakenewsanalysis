@@ -331,7 +331,7 @@ getLoveAvgArticle = (url) => {
         else if(result !== null) likes = result
         if(likes+dislikes === 0) resolve(0)
         else{
-          const avg = likes / likes+dislikes
+          const avg = likes / (likes+dislikes)
           resolve(avg)
         }
       })
@@ -350,7 +350,7 @@ getLoveAvgGlobal = (url) => {
         else if(result !== null) likes = result
         if(likes+dislikes === 0) resolve(0)
         else{
-          const avg = likes / likes+dislikes
+          const avg = likes / (likes+dislikes)
           resolve(avg)
         }
       })
