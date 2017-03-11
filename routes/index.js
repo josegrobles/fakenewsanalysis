@@ -98,6 +98,7 @@ router.post('/related', function(req, res, next) {
                         for (var i = 0; i < values.length; i++) {
                             if (moment(resp.publishedTime).isSame(values[i].datePublished, 'day')) final.news.push(values[i])
                         }
+                        console.log(final)
                         res.end(JSON.stringify(final))
                     }
                 }
