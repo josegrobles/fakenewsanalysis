@@ -295,6 +295,9 @@ router.post('/analysis', function(req, res, next) {
     return getLoveAvgGlobal(urinfo)
   }).then(r => {
     accuracy += r*0.05
+    return getUppercase(urinfo)
+  }).then(r => {
+    accuracy -= r*0.1
     res.end(JSON.stringify({accuracy}))
   }).catch(err => {
     console.log(err)
@@ -352,5 +355,24 @@ getLoveAvgGlobal = (url) => {
       })
     })
   })
+}
+
+getUppercase = (url) => {
+  return new Promise((resolve,reject) => {
+    client.hget(urinfo.hostname, urinfo.pathname, function(err, resp) {
+    if (err) reject(err)
+    else if(resp === null)
+    else{
+        let parser = JSON.parse(resp)
+        let arrayText = parser.title.split("")
+        var total = 0
+        for(var i = 0; i < arrayText ; i++){
+          if(arrayText[i] > 'A' && arrayText < 'Z') total++
+        }
+        let avg = total / arrayText.length
+        resolve(avg)
+    }
+  })
+})
 }
 module.exports = router;
