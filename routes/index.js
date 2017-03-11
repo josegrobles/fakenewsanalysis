@@ -29,6 +29,7 @@ client.sadd("biased","periodistadigital")
 client.sadd("biased","diariodigital")
 client.sadd("biased","gaceta")
 client.sadd("satiric","elmundotoday")
+client.sadd("satiric","libremercado")
 
 
 client.smembers("goodSites",function(err,reply){
@@ -306,7 +307,11 @@ router.post('/analysis', function(req, res, next) {
     return getUppercase(urinfo)
   }).then(r => {
     accuracy -= r*0.1
+    return getSentiments(urinfo)
     console.log(r,accuracy)
+  }).then(r => {
+    if (r > 0.5) accuracy += 0.1
+    else accuracy -= 0.5
     res.end(JSON.stringify({accuracy}))
   }).catch(err => {
     console.log(err)
@@ -383,5 +388,22 @@ getUppercase = (url) => {
     }
   })
 })
+}
+
+getSentiments = (url) => {
+  return new Promise((resolve,reject) => {
+    client.hget(url.hostname+":sentiments", url.pathname, function(err, resp) {
+      if(err) reject(err)
+      else if (resp === null) resolve(0)
+      else{
+        let negative = 0
+        let parser = JSON.parse(resp)
+        for(var i = 0 ;i < parser.sentiments.length; i++){
+          if(parser.sentiments[i].score < 0.8) negative++
+        }
+        const total = negative / parser.sentiments.length
+        resolve(total)
+      }
+  })
 }
 module.exports = router;
