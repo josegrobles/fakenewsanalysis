@@ -82,7 +82,7 @@ router.post('/related', function(req, res, next) {
         else {
           client.get(urinfo.pathname,function(err,r){
             if (err) res.end(JSON.stringify({status:"error"}))
-            else if (resp !== null) res.end(r)
+            else if (r !== null) res.end(r)
             else{
               let info = JSON.parse(resp)
               var options = {
